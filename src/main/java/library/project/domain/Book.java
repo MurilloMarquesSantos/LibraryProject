@@ -11,6 +11,6 @@ public class Book {
     String name;
     String pubDate;
     Double price;
-    Producer producer;
+    Publisher publisher;
 
 }

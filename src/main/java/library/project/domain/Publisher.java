@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class Producer {
+public class Publisher {
     Integer id;
     String name;
 }

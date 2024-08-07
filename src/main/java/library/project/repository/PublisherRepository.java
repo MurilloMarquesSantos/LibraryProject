@@ -1,7 +1,7 @@
 package library.project.repository;
 
 import library.project.conn.ConnectionFactory;
-import library.project.domain.Producer;
+import library.project.domain.Publisher;
 import lombok.extern.log4j.Log4j2;
 
 import java.sql.Connection;
@@ -13,107 +13,107 @@ import java.util.List;
 import java.util.Optional;
 
 @Log4j2
-public class ProducerRepository {
+public class PublisherRepository {
 
-    public static void insertProducer(Producer producer) {
-        log.info("Inserting new producer '{}'", producer.getName());
+    public static void insertPublisher(Publisher publisher) {
+        log.info("Inserting new publisher '{}'", publisher);
         try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = preparedStatementInsert(conn, producer)) {
+             PreparedStatement ps = preparedStatementInsert(conn, publisher)) {
             ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("Error while trying to add producer '{}'", producer.getName());
+            log.error("Error while trying to add publisher '{}'", publisher.getName());
         }
 
     }
 
-    private static PreparedStatement preparedStatementInsert(Connection conn, Producer producer) throws SQLException {
-        String sql = "INSERT INTO `library`.`producer` (`producerName`) VALUES (?);";
+    private static PreparedStatement preparedStatementInsert(Connection conn, Publisher publisher) throws SQLException {
+        String sql = "INSERT INTO `library`.`publisher` (`publisherName`) VALUES (?);";
         PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, producer.getName());
+        ps.setString(1, publisher.getName());
         return ps;
 
     }
 
-    public static List<Producer> showProducers() {
-        log.info("Retrieving producers");
-        List<Producer> producerList = new ArrayList<>();
+    public static List<Publisher> showPublishers() {
+        log.info("Retrieving publishers");
+        List<Publisher> publisherList = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = preparedStatementShow(conn);
              ResultSet rs = ps.executeQuery();
         ) {
             while (rs.next()) {
-                Producer producer = Producer.builder()
+                Publisher publisher = Publisher.builder()
                         .id(rs.getInt("Id"))
-                        .name(rs.getString("producerName"))
+                        .name(rs.getString("publisherName"))
                         .build();
-                producerList.add(producer);
+                publisherList.add(publisher);
             }
         } catch (SQLException e) {
-            log.error("Error while trying to retrieve producers", e);
+            log.error("Error while trying to retrieve publishers", e);
         }
-        return producerList;
+        return publisherList;
     }
 
     private static PreparedStatement preparedStatementShow(Connection conn) throws SQLException {
-        String sql = "SELECT * FROM library.producer;";
+        String sql = "SELECT * FROM library.publisher;";
         return conn.prepareStatement(sql);
 
     }
 
-    public static void deleteProducer(int id) {
-        log.info("Deleting producer '{}'", id);
+    public static void deletePublisher(int id) {
+        log.info("Deleting publisher '{}'", id);
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = preparedStatementDelete(conn, id)) {
             ps.execute();
         } catch (SQLException e) {
-            log.error("Error while trying to delete producer", e);
+            log.error("Error while trying to delete publisher", e);
         }
 
     }
 
     private static PreparedStatement preparedStatementDelete(Connection conn, int id) throws SQLException {
-        String sql = "DELETE FROM `library`.`producer` WHERE (`Id` = ? );";
+        String sql = "DELETE FROM `library`.`publisher` WHERE (`Id` = ? );";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, id);
         return ps;
     }
 
-    public static void updateProducer(Producer producer) {
-        log.info("Updating producer '{}'", producer);
+    public static void updatePublisher(Publisher publisher) {
+        log.info("Updating publisher '{}'", publisher);
         try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement ps = preparedStatementUpdate(conn, producer)) {
+             PreparedStatement ps = preparedStatementUpdate(conn, publisher)) {
             ps.execute();
         } catch (SQLException e) {
-            log.error("Error while trying to update producer '{}' ", producer);
+            log.error("Error while trying to update publisher '{}' ", publisher);
         }
     }
 
-    private static PreparedStatement preparedStatementUpdate(Connection conn, Producer producer) throws SQLException {
-        String sql = "UPDATE `library`.`producer` SET `producerName` = ?  WHERE (`Id` = ? );";
+    private static PreparedStatement preparedStatementUpdate(Connection conn, Publisher publisher) throws SQLException {
+        String sql = "UPDATE `library`.`publisher` SET `publisherName` = ? WHERE (`Id` = ?);";
         PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, producer.getName());
-        ps.setInt(2, producer.getId());
+        ps.setString(1, publisher.getName());
+        ps.setInt(2, publisher.getId());
         return ps;
     }
 
-    public static Optional<Producer> findById(int id) {
+    public static Optional<Publisher> findById(int id) {
 
-        log.info("Finding producer by Id '{}'", id);
+        log.info("Finding publisher by Id '{}'", id);
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = preparedStatementFindById(conn, id)) {
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) return Optional.empty();
-            return Optional.of(Producer.builder()
+            return Optional.of(Publisher.builder()
                     .id(rs.getInt("Id"))
-                    .name(rs.getString("producerName")).build());
+                    .name(rs.getString("publisherName")).build());
         } catch (SQLException e) {
-            log.error("Error while trying to find producer by id", e);
+            log.error("Error while trying to find publisher by id", e);
         }
         return Optional.empty();
     }
 
     private static PreparedStatement preparedStatementFindById(Connection conn, int id) throws SQLException {
-        String sql = "SELECT * FROM library.producer WHERE (´id´ = ? );";
+        String sql = "SELECT * FROM library.publisher WHERE id = ? ;";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, id);
         return ps;
