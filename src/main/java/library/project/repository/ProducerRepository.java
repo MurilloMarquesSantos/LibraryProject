@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 public class ProducerRepository {
@@ -72,6 +73,47 @@ public class ProducerRepository {
 
     private static PreparedStatement preparedStatementDelete(Connection conn, int id) throws SQLException {
         String sql = "DELETE FROM `library`.`producer` WHERE (`Id` = ? );";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, id);
+        return ps;
+    }
+
+    public static void updateProducer(Producer producer) {
+        log.info("Updating producer '{}'", producer);
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = preparedStatementUpdate(conn, producer)) {
+            ps.execute();
+        } catch (SQLException e) {
+            log.error("Error while trying to update producer '{}' ", producer);
+        }
+    }
+
+    private static PreparedStatement preparedStatementUpdate(Connection conn, Producer producer) throws SQLException {
+        String sql = "UPDATE `library`.`producer` SET `producerName` = ?  WHERE (`Id` = ? );";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, producer.getName());
+        ps.setInt(2, producer.getId());
+        return ps;
+    }
+
+    public static Optional<Producer> findById(int id) {
+
+        log.info("Finding producer by Id '{}'", id);
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = preparedStatementFindById(conn, id)) {
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) return Optional.empty();
+            return Optional.of(Producer.builder()
+                    .id(rs.getInt("Id"))
+                    .name(rs.getString("producerName")).build());
+        } catch (SQLException e) {
+            log.error("Error while trying to find producer by id", e);
+        }
+        return Optional.empty();
+    }
+
+    private static PreparedStatement preparedStatementFindById(Connection conn, int id) throws SQLException {
+        String sql = "SELECT * FROM library.producer WHERE (´id´ = ? );";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, id);
         return ps;
