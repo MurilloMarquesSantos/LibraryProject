@@ -9,7 +9,7 @@ import lombok.Value;
 public class Book {
     Integer id;
     String name;
-    String pubDate;
+    Integer pubDate;
     Double price;
     Publisher publisher;
 
