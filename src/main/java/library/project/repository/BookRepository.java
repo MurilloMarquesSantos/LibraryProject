@@ -209,5 +209,23 @@ public class BookRepository {
         return ps;
     }
 
+    public static void deleteBook(int id) {
+        log.info("Deleting book '{}'", id);
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = preparedStatementDelete(conn, id)) {
+            ps.execute();
+        } catch (SQLException e) {
+            log.error("Error while trying to delete book", e);
+        }
+    }
+
+    private static PreparedStatement preparedStatementDelete(Connection conn, int id) throws SQLException {
+        String sql = "DELETE FROM `library`.`book` WHERE (`Id` = ? );";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, id);
+        return ps;
+
+    }
+
 
 }

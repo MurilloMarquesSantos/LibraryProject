@@ -64,7 +64,7 @@ public class PublisherRepository {
         List<Publisher> publisherList = new ArrayList<>();
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = preparedStatementShow(conn);
-             ResultSet rs = ps.executeQuery();
+             ResultSet rs = ps.executeQuery()
         ) {
             while (rs.next()) {
                 Publisher publisher = Publisher.builder()

@@ -1,8 +1,6 @@
 package library.project.service;
 
-import library.project.domain.Book;
 import library.project.domain.Publisher;
-import library.project.repository.BookRepository;
 import library.project.repository.PublisherRepository;
 
 import java.util.ArrayList;
@@ -55,10 +53,14 @@ public class PublisherService {
         showPublishers();
         System.out.println("Type the id of publisher you want to delete: ");
         int id = Integer.parseInt(SCANNER.nextLine());
-        System.out.println("Are you sure? Y/N ");
-        String op = SCANNER.nextLine();
-        if (op.equalsIgnoreCase("y")) {
-            PublisherRepository.deletePublisher(id);
+        Optional<Publisher> publisherOptional = PublisherRepository.findPublisherById(id);
+        if (publisherOptional.isPresent()) {
+            Publisher publisher = publisherOptional.get();
+            System.out.printf("Are you sure to delete '%s'? Y/N%n", publisher.getName());
+            String op = SCANNER.nextLine();
+            if (op.equalsIgnoreCase("y")) {
+                PublisherRepository.deletePublisher(id);
+            }
         }
     }
 

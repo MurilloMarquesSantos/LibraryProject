@@ -3,7 +3,6 @@ package library.project.service;
 import library.project.domain.Book;
 import library.project.domain.Publisher;
 import library.project.repository.BookRepository;
-import library.project.repository.PublisherRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +19,7 @@ public class BookService {
             case 3 -> showBooks();
             case 4 -> showBookByName();
             case 5 -> updateBook();
+            case 6 -> deleteBook();
             default -> throw new IllegalArgumentException("Invalid option");
         }
 
@@ -82,9 +82,15 @@ public class BookService {
     public static void showBookByName() {
         System.out.println("Type the book name you want to search for: ");
         String name = SCANNER.nextLine();
-        BookRepository.showBookByName(name)
-                .forEach(b -> System.out.printf("[%d] - '%s' - %d - $%s - %s - [%d]%n", b.getId(), b.getName(),
-                        b.getPubDate(), formatPrice(b), b.getPublisher().getName(), b.getPublisher().getId()));
+        List<Book> bookList = BookRepository.showBookByName(name);
+        if (!bookList.isEmpty()) {
+            bookList.forEach(b -> System.out.printf("[%d] - '%s' - %d - $%s - %s - [%d]%n", b.getId(), b.getName(),
+                    b.getPubDate(), formatPrice(b), b.getPublisher().getName(), b.getPublisher().getId()));
+        }
+        if (bookList.isEmpty()) {
+            System.out.printf("No book found with this name: '%s'%n", name);
+
+        }
 
     }
 
@@ -141,6 +147,23 @@ public class BookService {
 
         BookRepository.updateBook(book);
 
+
+    }
+
+    public static void deleteBook() {
+        System.out.println("Available books: ");
+        showBooks();
+        System.out.println("Type the book Id to delete: ");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        Optional<Book> bookOptional = BookRepository.findBookById(id);
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+            System.out.printf("Are you sure to delete this book? '%s' Y/N%n", book.getName());
+            String op = SCANNER.nextLine();
+            if (op.equalsIgnoreCase("Y")) {
+                BookRepository.deleteBook(id);
+            }
+        }
 
     }
 
