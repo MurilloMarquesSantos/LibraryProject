@@ -47,7 +47,7 @@ public class PublisherService {
         System.out.println("Publishers: ");
         showPublishers();
         System.out.println("Type the id of the publisher you want to update: ");
-        Optional<Publisher> publisherOptional = PublisherRepository.findById(Integer.parseInt(SCANNER.nextLine()));
+        Optional<Publisher> publisherOptional = PublisherRepository.findPublisherById(Integer.parseInt(SCANNER.nextLine()));
         if (publisherOptional.isEmpty()) {
             System.out.println("Id not found");
             return;

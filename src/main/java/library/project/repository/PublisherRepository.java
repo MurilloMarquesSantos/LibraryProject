@@ -96,9 +96,7 @@ public class PublisherRepository {
         return ps;
     }
 
-    public static Optional<Publisher> findById(int id) {
-
-        log.info("Finding publisher by Id '{}'", id);
+    public static Optional<Publisher> findPublisherById(int id) {
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement ps = preparedStatementFindById(conn, id)) {
             ResultSet rs = ps.executeQuery();
