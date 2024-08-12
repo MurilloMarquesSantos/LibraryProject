@@ -34,6 +34,31 @@ public class PublisherRepository {
 
     }
 
+    public static void insertPublisherTransaction(List<Publisher> publisherList) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            conn.setAutoCommit(false);
+            preparedStatementInsertTransaction(conn, publisherList);
+            conn.commit();
+            conn.setAutoCommit(true);
+        } catch (SQLException e) {
+            log.error("Error while trying to add publishers", e);
+        }
+
+    }
+
+    private static void preparedStatementInsertTransaction(Connection conn, List<Publisher> publisherList) {
+        String sql = "INSERT INTO `library`.`publisher` (`publisherName`) VALUES (?);";
+        for (Publisher p : publisherList) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                log.info("Inserting Publisher '{}'", p.getName());
+                ps.setString(1, p.getName());
+                ps.execute();
+            } catch (SQLException e) {
+                log.error("Error while trying to add publishers", e);
+            }
+        }
+    }
+
     public static List<Publisher> showPublishers() {
         log.info("Retrieving publishers");
         List<Publisher> publisherList = new ArrayList<>();

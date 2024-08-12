@@ -1,8 +1,12 @@
 package library.project.service;
 
+import library.project.domain.Book;
 import library.project.domain.Publisher;
+import library.project.repository.BookRepository;
 import library.project.repository.PublisherRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -12,9 +16,10 @@ public class PublisherService {
     public static void menu(int op) {
         switch (op) {
             case 1 -> addPublisher();
-            case 2 -> showPublishers();
-            case 3 -> updatePublisher();
-            case 4 -> deletePublisher();
+            case 2 -> addPublisherTransaction();
+            case 3 -> showPublishers();
+            case 4 -> updatePublisher();
+            case 5 -> deletePublisher();
             default -> throw new IllegalArgumentException("Not a valid option");
         }
     }
@@ -24,6 +29,20 @@ public class PublisherService {
         String publisherName = SCANNER.nextLine();
         Publisher publisher = Publisher.builder().name(publisherName).build();
         PublisherRepository.insertPublisher(publisher);
+    }
+
+    public static void addPublisherTransaction() {
+        List<Publisher> publisherList = new ArrayList<>();
+        while (true) {
+            System.out.println("Type the publisher name: ");
+            String publisherName = SCANNER.nextLine();
+            Publisher publisher = Publisher.builder().name(publisherName).build();
+            publisherList.add(publisher);
+            System.out.println("You want to add more? Y/N");
+            String choice = SCANNER.nextLine();
+            if (choice.equalsIgnoreCase("N")) break;
+        }
+        PublisherRepository.insertPublisherTransaction(publisherList);
     }
 
     public static void showPublishers() {
